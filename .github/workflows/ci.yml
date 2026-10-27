@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly: catches breakage from new SDK or Next.js releases even when nothing here changed.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      # Type-check, unit tests against the installed @sodax/* packages, production build.
+      - run: npm run ci
+
+  # The same check with the newest published @sodax/* versions, so a breaking SDK
+  # release shows up here before anyone installs the template fresh.
+  latest-sdk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund @sodax/sdk@latest @sodax/dapp-kit@latest @sodax/wallet-sdk-react@latest
+      - run: npm run ci
