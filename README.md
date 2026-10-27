@@ -9,9 +9,8 @@ network. Independent solvers compete to fill that intent, and the output arrives
 ## Getting started
 
 ```shell
-npx create-solana-dapp@latest -t gh:solana-foundation/templates/community/sodax-cross-network-swap
-cd sodax-cross-network-swap
-npm install
+npx create-solana-dapp@latest my-swap -t gh:gosodax/sodax-solana-swap-template
+cd my-swap
 npm run dev
 ```
 
@@ -48,3 +47,5 @@ the [SODAX docs](https://docs.sodax.com/solana) and the
 - `npm run dev` starts the development server.
 - `npm run test` runs the unit tests.
 - `npm run ci` type-checks, tests and builds. Run it after upgrading `@sodax/*` packages.
+
+CI runs the same check on every push and weekly, once with the locked versions and once with the newest published `@sodax/*` packages. Dependabot opens PRs for dependency updates.
